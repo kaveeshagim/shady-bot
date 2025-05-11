@@ -11,8 +11,39 @@ const quotes = [
   "Ah, another brilliant error. Truly, you're the Van Gogh of bugs.",
 ];
 
-document.getElementById("generate").addEventListener("click", function () {
-  const randomIndex = Math.floor(Math.random() * quotes.length);
-  const quote = quotes[randomIndex];
-  document.getElementById("quote").innerText = quote;
+const quoteEl = document.getElementById("quote");
+const btn = document.getElementById("generate");
+const sfx = document.getElementById("sfx");
+const toggleThemeBtn = document.getElementById("toggle-theme");
+
+// 🧠 Typing effect
+function typeQuote(text) {
+  quoteEl.textContent = "";
+  let i = 0;
+  const speed = 30;
+  const typing = setInterval(() => {
+    quoteEl.textContent += text.charAt(i);
+    i++;
+    if (i >= text.length) clearInterval(typing);
+  }, speed);
+}
+
+// 🔈 Voice using Web Speech API
+function speak(text) {
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.rate = 1;
+  utter.pitch = 1.2;
+  utter.voice =
+    speechSynthesis
+      .getVoices()
+      .find((v) => v.name.includes("Google") || v.default) || null;
+  speechSynthesis.speak(utter);
+}
+
+// 🖱️ Roast button logic
+btn.addEventListener("click", () => {
+  const random = quotes[Math.floor(Math.random() * quotes.length)];
+  sfx.play();
+  typeQuote(random);
+  speak(random);
 });
